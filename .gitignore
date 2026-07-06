@@ -5,6 +5,13 @@ __pycache__/
 
 # C extensions
 *.so
+echo "venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+allure-results/
+.DS_Store
+*.log" > .gitignore
 
 # Distribution / packaging
 .Python

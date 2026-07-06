@@ -176,7 +176,7 @@ stellarburgers-tests/
 
 ### Предположения
 
-- Сайт **Stellar Burgers** доступен по указанному URL.
+- Сайт **Stellar Burgers** доступен по указанному URL (`https://stellarburgers.education-services.ru/`).
 - Тестовый пользователь существует (`paramonov.maxim@vk.com` / `13542Qwe`).
 - После выхода система перенаправляет на страницу логина.
 

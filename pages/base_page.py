@@ -14,6 +14,7 @@ class BasePage:
     def __init__(self, driver: WebDriver) -> None:
         """
 	    Инициализация базовой страницы.
+
         :param driver: экземпляр WebDriver.
         """
         self.driver = driver
@@ -24,6 +25,7 @@ class BasePage:
     def _wait_element_clickable(self, locator: tuple[str, str]) -> WebElement:
         """
 	    Метод ожидает, пока элемент станет кликабельным.
+
         :param locator: кортеж (By, значение);
         :return WebElement - кликабельный элемент.
         """
@@ -32,6 +34,7 @@ class BasePage:
     def _wait_element_visible(self, locator: tuple[str, str]) -> WebElement:
         """
 	    Метод ожидает, пока элемент станет видимым.
+
         :param locator: кортеж (By, значение);
         :return WebElement - видимый элемент.
         """
@@ -41,7 +44,8 @@ class BasePage:
 
     def get_current_url(self) -> str:
         """
-	    Метод возвращает текущий URL страницы
+	    Метод возвращает текущий URL страницы.
+
 	    :return: строка с текущим URL.
 	    """
         return self.driver.current_url
@@ -49,6 +53,7 @@ class BasePage:
     def wait_for_url(self, expected_url: str) -> None:
         """
 	    Метод ожидает изменение текущего URL к заявленному.
+
         :param expected_url: ожидаемый URL.
         """
         WebDriverWait(self.driver, self.timeout).until(EC.url_to_be(expected_url))
@@ -56,6 +61,7 @@ class BasePage:
     def click_button(self, locator: tuple[str, str]) -> None:
         """
 	    Метод кликает по кнопке.
+
         :param locator: кортеж (By, значение).
         """
         element = self._wait_element_clickable(locator)
@@ -64,6 +70,7 @@ class BasePage:
     def send_keys_to_field(self, locator: tuple[str, str], text: str) -> None:
         """
 	    Метод очищает поле ввода и вводит указанный текст.
+
         :param locator: кортеж (By, значение);
 	    :param text: текст для ввода.
         """
@@ -74,6 +81,7 @@ class BasePage:
     def is_element_visible(self, locator: tuple[str, str]) -> bool:
         """
 	    Метод проверяет, видно ли элемент на странице.
+
         :param locator: кортеж (By, значение);
         :return True, если элемент видим, если нет, то возвращает False.
         """
@@ -86,6 +94,7 @@ class BasePage:
     def get_element_text(self, locator: tuple[str, str]) -> str | None:
         """
 	    Метод ожидает видимости элемента и возвращает его текст.
+
         :param locator: кортеж (By, значение);
         :return: текст, если элемент не найден, возвращает None.
         """
@@ -97,8 +106,34 @@ class BasePage:
 
     def check_url(self, expected_url: str) -> bool:
         """
-        Проверяет, что текущий URL совпадает с ожидаемым URL главной страницы.
-        :param expected_url: ожидаемый URL,
+        Метод проверяет, что текущий URL совпадает с ожидаемым URL.
+
+        :param expected_url: ожидаемый URL;
         :return: True, если URL совпадает, иначе False.
         """
         return self.get_current_url() == expected_url
+
+    def has_browser_errors(self)-> bool:
+        """
+        Метод проверяет наличие ошибок в логах браузера при загрузке страницы.
+
+        :return: True, если есть ошибки, иначе False.      
+        """
+        logs = self.driver.get_log('browser')
+        for log in logs:
+            if log.get('level') == 'SEVERE':
+                return True
+        return False
+    
+    def get_browser_error_messages(self) -> list:
+        """
+        Метод возвращает список сообщений об ошибках при загрузке страницы.
+
+        :return: Список с ошибками.
+        """
+        logs = self.driver.get_log('browser')
+        errors = []
+        for log in logs:
+            if log.get('level') == 'SEVERE':
+                errors.append(log.get('message', ''))
+        return errors

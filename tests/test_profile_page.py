@@ -17,15 +17,16 @@ class TestProfilePage:
         3. Ввести верные email и пароль;
         4. Перейти в личный кабинет;
         5. Нажать на кнопку выхода;
-        6. Проверить переход на страницу логина
+        6. Проверка переход на страницу логина;
+        7. Проверка отсутствия ошибок в логах браузера.
     ''')
     def test_logout(self, main_page: MainPage, login_page: LoginPage, profile_page: ProfilePage) -> None:
         """
         Тест проверяет успешный выход из профиля:
-        - авторизация,
-        - переход в личный кабинет,
-        - клик по кнопке 'Выход',
-        - перенаправление на страницу логина.
+        - Авторизация,
+        - Переход в личный кабинет,
+        - Клик по кнопке 'Выход',
+        - Перенаправление на страницу логина.
 
         :param main_page: экземпляр MainPage,
         :param login_page: экземпляр LoginPage,
@@ -53,3 +54,6 @@ class TestProfilePage:
         with allure.step("Проверить переход на страницу логина"):
             login_page.wait_for_url(Urls.LOGIN_URL)
             assert login_page.check_auth_form_visible(), "Форма авторизации не отображается после выхода"
+
+        with allure.step('Проверить отсутствие ошибок в логах браузера'):
+            assert not login_page.has_browser_errors(), f"Ошибка при загрузке страницы: {login_page.get_browser_error_messages()}"

@@ -12,6 +12,7 @@ from pages.main_page import MainPage
 from pages.login_page import LoginPage
 from pages.profile_page import ProfilePage
 from data.urls import Urls
+from helpers.user_data import PersonalData, IncorrectPersonalData
 
 from collections.abc import Generator
 
@@ -45,8 +46,8 @@ def driver() -> Generator[WebDriver, None, None]:
         driver.quit()
 
 @pytest.fixture
-def main_page(driver) -> MainPage:
-    """"
+def main_page(driver: WebDriver) -> MainPage:
+    """
     Фикстура для создания экземпляра главной страницы.
     :param driver: экземпляр WebDriver.
     :return объект MainPage
@@ -54,8 +55,8 @@ def main_page(driver) -> MainPage:
     return MainPage(driver)
 
 @pytest.fixture
-def login_page(driver) -> LoginPage:
-    """"
+def login_page(driver: WebDriver) -> LoginPage:
+    """
     Фикстура для создания экземпляра страницы авторизации.
     :param driver: экземпляр WebDriver.
     :return объект LoginPage
@@ -63,10 +64,44 @@ def login_page(driver) -> LoginPage:
     return LoginPage(driver)
 
 @pytest.fixture
-def profile_page(driver) -> ProfilePage:
-    """"
+def profile_page(driver: WebDriver) -> ProfilePage:
+    """
     Фикстура для создания экземпляра страницы личного кабинета.
     :param driver: экземпляр WebDriver.
     :return объект ProfilePage
     """
     return ProfilePage(driver)
+
+@pytest.fixture
+def auth_correct_user_data(main_page: MainPage, login_page: LoginPage) -> None:
+    """
+    Фикстура выполняет авторизацию под действующим пользователем;
+    Использует фикстуры main_page, login_page для выполнения авторизации;
+    После входа ждет перенаправление на главную страницу.
+
+    :param main_page: фикстура главной страницы,
+    :param login_page: фикстура страницы авторизации.
+    """
+    with allure.step('Авторизация под действующим пользователем'):
+        main_page.login_btn_click()
+        login_page.login(
+            PersonalData.USER_EMAIL,
+            PersonalData.USER_PASSWORD
+        )
+        main_page.wait_for_url(Urls.MAIN_URL)
+
+@pytest.fixture
+def auth_incorrect_user_data(main_page: MainPage, login_page: LoginPage) -> None:
+    """
+    Фикстура выполняет авторизацию под некорретными данными пользователя.
+    После ввода данных остается на странице авторизации с сообщением об ошибке.
+
+    :param main_page: фикстура главной страницы,
+    :param login_page: фикстура страницы авторизации.
+    """
+    with allure.step('Попытка авторизации под неверными учетными данными'):
+        main_page.login_btn_click()
+        login_page.login(
+            IncorrectPersonalData.USER_EMAIL,
+            IncorrectPersonalData.USER_PASSWORD
+        )

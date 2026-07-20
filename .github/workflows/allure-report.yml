@@ -28,6 +28,8 @@ jobs:
           pytest tests/ --alluredir=allure-results
         env:
           CI: true
+          USER_EMAIL: ${{secrets.USER_EMAIL}}
+          USER_PASSWORD: ${{secrets.USER_PASSWORD}}
 
       - name: Install Allure
         run: |
